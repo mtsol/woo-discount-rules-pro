@@ -9,7 +9,7 @@ if (!class_exists('FlycartWooDiscountRulesPriceProductBased')) {
         /**
          * Verify Quantity
          * */
-        public static function verifyQuantity($quantity_rule, $quantity, $quantity_from, $quantity_to, $buy_type){
+        public static function verifyQuantity($quantity_rule, $quantity, $quantity_from, $quantity_to, $buy_type, $cart_quantity = 10){
             $quantityMatched = array();
             switch ($quantity_rule) {
                 case 'less':
@@ -25,6 +25,11 @@ if (!class_exists('FlycartWooDiscountRulesPriceProductBased')) {
                 case 'from':
                     foreach($quantity as $quantityValue){
                         $quantityMatched[] = (($quantityValue >= $quantity_from) && ($quantityValue <= $quantity_to)) ? 1: 0;
+                    }
+                    break;
+                case 'cart':
+                    foreach($quantity as $quantityValue){
+                        $quantityMatched[] = (($cart_quantity >= $quantity_from)) ? 1: 0;
                     }
                     break;
                 case 'more':
