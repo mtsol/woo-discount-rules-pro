@@ -1308,10 +1308,19 @@ if (!class_exists('FlycartWooDiscountRulesPricingRules')) {
                 $category_to_apply = isset($product_based_conditions['category_to_apply']) ? $product_based_conditions['category_to_apply'] : array();
                 $get_discount_type = isset($product_based_conditions['get_discount_type']) ? $product_based_conditions['get_discount_type'] : 'product';
 
+                //rule
+                $quantity_from = 10;
+                $quantity_rule = 'cart';
+                
                 $product_based_discounts = isset($rule['product_based_discount']) ? $rule['product_based_discount'] : array();
                 $discount_type = isset($product_based_discounts['discount_type']) ? $product_based_discounts['discount_type'] : 'percentage_discount';
                 $discount_value = isset($product_based_discounts['discount_value']) ? $product_based_discounts['discount_value'] : '';
                 $cart = FlycartWoocommerceCart::get_cart();
+                $cart_quantity = 0; 
+				foreach ($cart as $cart_item_key => $values) {
+					 $cart_quantity = $cart_quantity + $values['quantity'];
+				}
+				error_log($cart_quantity);
                 $_quantity = array();
                 if(isset($item['variation_id']) && $item['variation_id'])
                     $product_id = $item['variation_id'];
@@ -1351,7 +1360,7 @@ if (!class_exists('FlycartWooDiscountRulesPricingRules')) {
                         if(count($product_to_buy) != count($matchedProducts)) $proceed = 0;
                     }
                     if($proceed){
-                        $quantityMatched = FlycartWooDiscountRulesPriceProductBased::verifyQuantity($quantity_rule, $quantity, $quantity_from, $quantity_to, $buy_type);
+                        $quantityMatched = FlycartWooDiscountRulesPriceProductBased::verifyQuantity($quantity_rule, $quantity, $quantity_from, $quantity_to, $buy_type, $cart_quantity);
                         if($quantityMatched){
                             $result['amount'][$discount_type] = $discount_value;
                             $result['apply_to']['products'] = $product_to_apply;
